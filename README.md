@@ -4,6 +4,14 @@ Portable copy of the published Masters Argentina project, downloaded on November
 
 This is a static website: no installation, build step, Node.js, database, or Netlify account is required. The original Spanish content, design, and client-side navigation are preserved.
 
+## Netlify production deployment
+
+Production URL: https://keen-faun-89f080.netlify.app/
+
+Netlify project `keen-faun-89f080` deploys the `main` branch of `Masters-Argentina/masters-argentina-web`. Push or merge changes into `main` to publish an update automatically. Watch progress in the [Netlify deploy dashboard](https://app.netlify.com/projects/keen-faun-89f080/deploys).
+
+`netlify.toml` keeps the publish directory at the repository root (`.`) and the build command empty. No environment variables or Cloudinary credentials are required. The existing GitHub Pages site remains available.
+
 ## Publish on GitHub Pages
 
 1. Extract `masters-argentina-github.zip`.

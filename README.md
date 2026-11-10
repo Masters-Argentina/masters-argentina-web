@@ -1,6 +1,6 @@
 # Masters Argentina
 
-Static website for Masters Argentina. Configured production domain: https://www.mastersargentina.org/
+Static website for Masters Argentina. Configured production domain: https://mastersargentina.org/ (`www` redirects to this primary hostname).
 
 Original site: https://old.mastersargentina.org/ (also reachable through `/oldpage`). Netlify preview: https://keen-faun-89f080.netlify.app/. DNS propagation and HTTPS provisioning must complete before the custom-domain launch is considered verified. Recovery instructions: `docs/domain-rollback.txt`.
 

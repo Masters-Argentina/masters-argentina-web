@@ -4,7 +4,7 @@ The November 10 technical update applies the supplied SEO feedback while preserv
 
 ## Domain ownership and migration
 
-The configured production origin is `https://www.mastersargentina.org`. The user authorized the main-domain migration on November 10, 2026. The original Weebly site is preserved at `https://old.mastersargentina.org`; `/oldpage` redirects there. The domain remains registered and DNS-managed through Weebly. Email, Brevo, nameservers, and conference subdomain records are retained.
+The configured production origin is `https://mastersargentina.org` (`www` redirects to the apex primary hostname). The user authorized the main-domain migration on November 10, 2026. The original Weebly site is preserved at `https://old.mastersargentina.org`; `/oldpage` redirects there. The domain remains registered and DNS-managed through Weebly. Email, Brevo, nameservers, and conference subdomain records are retained.
 
 `legacy-redirects.csv` inventories the 57 URLs retrieved from the original sitemap plus homepage. Section and matching conference overviews redirect to the corresponding new page; unique historical pages redirect to the exact original page on the archive. The cancelled 2020 conference page remains on the archive because it is not equivalent to the new webinar summary. The newsletter uses its original Weebly page and form IDs on the archive, with a temporary redirect from its old main-domain address. Historical source links go directly to the archive to avoid pointing back to their own new summary pages. Uploaded-file URLs also redirect to the archive. No catch-all redirect masks unknown URLs.
 

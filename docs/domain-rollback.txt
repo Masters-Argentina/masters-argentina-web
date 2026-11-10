@@ -2,7 +2,7 @@ MASTERS ARGENTINA — DOMAIN MIGRATION AND RECOVERY
 Prepared November 10, 2026. These are recovery instructions, not an automatic rollback.
 
 HOSTS
-New site: https://www.mastersargentina.org/ (Netlify; HTTPS/primary-hostname status must be verified after propagation)
+New site: https://mastersargentina.org/ (Netlify primary; www redirects here; HTTPS must be verified after propagation)
 Netlify preview: https://keen-faun-89f080.netlify.app/
 Original Weebly site: https://old.mastersargentina.org/
 Archive shortcut: /oldpage -> https://old.mastersargentina.org/ (302)

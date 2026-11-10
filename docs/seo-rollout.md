@@ -4,9 +4,11 @@ The November 10 technical update applies the supplied SEO feedback while preserv
 
 ## Domain ownership and migration
 
-The current production origin is `https://keen-faun-89f080.netlify.app`. Changing to `www.mastersargentina.org` requires an explicit domain-cutover decision and control of the existing site/DNS. At cutover, update `SITE_ORIGIN` in `scripts/seo.mjs`, rebuild all pages, configure the custom domain in Netlify, and validate the old URL migration before changing DNS.
+The configured production origin is `https://www.mastersargentina.org`. The user authorized the main-domain migration on November 10, 2026. The original Weebly site is preserved at `https://old.mastersargentina.org`; `/oldpage` redirects there. The domain remains registered and DNS-managed through Weebly. Email, Brevo, nameservers, and conference subdomain records are retained.
 
-The supplied feedback references 57 Weebly URLs but does not contain their destinations. `legacy-redirects.csv` is an empty mapping template for the owning team: fill `legacy_url`, `new_path`, `evidence`, and `approved`. Validate each approved destination against a generated page before converting the rows into 301 rules. Do not route every old page to home or redirect the newsletter form to a non-equivalent page. The few rules already in `_redirects` are compatibility aliases for this recovered project; they are not the 57-URL Weebly migration.
+`legacy-redirects.csv` inventories the 57 URLs retrieved from the original sitemap plus homepage. Section and matching conference overviews redirect to the corresponding new page; unique historical pages redirect to the exact original page on the archive. The cancelled 2020 conference page remains on the archive because it is not equivalent to the new webinar summary. The newsletter uses its original Weebly page and form IDs on the archive, with a temporary redirect from its old main-domain address. Historical source links go directly to the archive to avoid pointing back to their own new summary pages. Uploaded-file URLs also redirect to the archive. No catch-all redirect masks unknown URLs.
+
+DNS cutover: root A `75.2.60.5`; `www` CNAME `keen-faun-89f080.netlify.app`; `old` A `199.34.228.79` and `www.old` CNAME `old.mastersargentina.org` (added by Weebly's connection flow). Check Netlify's certificate and primary-hostname status after propagation. See `domain-rollback.txt` for the original values and recovery steps.
 
 Hash fragments are not sent to the server. Old `#` bookmarks use client-side compatibility navigation, not claimed HTTP 301 redirects.
 

@@ -1,0 +1,3 @@
+# Emergency fallback: replace the ROOT _redirects file with this content, commit, and push.
+# Requires the old Weebly site and Netlify HTTPS to be healthy. See domain-rollback.txt.
+/* https://old.mastersargentina.org/ 302!

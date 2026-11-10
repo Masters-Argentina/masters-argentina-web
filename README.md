@@ -1,6 +1,8 @@
 # Masters Argentina
 
-Static website for Masters Argentina. Production: https://keen-faun-89f080.netlify.app/
+Static website for Masters Argentina. Configured production domain: https://www.mastersargentina.org/
+
+Original site: https://old.mastersargentina.org/ (also reachable through `/oldpage`). Netlify preview: https://keen-faun-89f080.netlify.app/. DNS propagation and HTTPS provisioning must complete before the custom-domain launch is considered verified. Recovery instructions: `docs/domain-rollback.txt`.
 
 Netlify deploys `main` from `Masters-Argentina/masters-argentina-web` automatically. The public pages contain their content in the delivered HTML; JavaScript enhances menus, carousels and interactions. No database, frontend framework or Cloudinary credentials are required.
 

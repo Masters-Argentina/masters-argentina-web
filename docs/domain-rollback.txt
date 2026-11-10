@@ -1,0 +1,52 @@
+MASTERS ARGENTINA — DOMAIN MIGRATION AND RECOVERY
+Prepared November 10, 2026. These are recovery instructions, not an automatic rollback.
+
+HOSTS
+New site: https://www.mastersargentina.org/ (Netlify; HTTPS/primary-hostname status must be verified after propagation)
+Netlify preview: https://keen-faun-89f080.netlify.app/
+Original Weebly site: https://old.mastersargentina.org/
+Archive shortcut: /oldpage -> https://old.mastersargentina.org/ (302)
+Newsletter: https://old.mastersargentina.org/contacto-cn-newsletter.html
+GitHub: https://github.com/Masters-Argentina/masters-argentina-web (main, automatic deployment)
+Weebly site ID: 135309264663681958
+Netlify project: keen-faun-89f080
+
+QUICKEST RETURN TO THE OLD WEBSITE (after Netlify HTTPS is working)
+1. Replace the repository's _redirects file with the single rule in docs/emergency-weebly-redirects.txt.
+2. Commit and push to main; wait for Netlify to show Published.
+3. Test the main domain in a private browser window. Every URL will temporarily send visitors to the old Weebly homepage. Its own navigation, historical pages, and newsletter remain on Weebly.
+4. To undo this emergency mode, restore _redirects from the migration commit 124ae1c and redeploy.
+This keeps the main domain on Netlify and therefore avoids another DNS wait. It does not repair a missing Netlify TLS certificate or a Netlify service outage.
+
+FULL RETURN TO WEEBLY HOSTING
+1. Keep the original Weebly site and its plan active. Do not delete it, reset DNS, change nameservers, or cancel the domain registration.
+2. In the original site's editor, Settings > General > Site Address > Change, connect www.mastersargentina.org again. Choose connect, not a domain transfer or paid new domain. Publish. The connection may automatically update Weebly-managed DNS; inspect the records afterward.
+3. Restore the website DNS records: @ A 199.34.228.68; www A 199.34.228.68. Replace the www CNAME rather than leaving conflicting A/CNAME records. If Weebly's reconnect flow provides an updated required IP, use the newly displayed IP consistently for @ and www and document that change.
+4. Leave all email/MX, Brevo/DKIM/DMARC, verification, mail, wildcard, nameserver, and conference records unchanged. Never use Reset DNS records.
+5. Test root and www over HTTPS, the home page, historical pages, newsletter and contact forms. Verify the Weebly dashboard shows the intended published address. Reconnecting the original site to the main domain may detach old.mastersargentina.org; the same original content then lives at the main domain. Keep the archive DNS entries until their handling has been checked.
+6. DNS records originally had TTL 14400 seconds (4 hours). The Weebly editor did not expose a TTL field. Some visitors may retain the previous route for hours; rollback is not instantaneous. Existing cached permanent redirects can also outlive the DNS change, so do not remove the archive prematurely.
+
+ORIGINAL WEBSITE DNS (before this migration)
+@      A       199.34.228.68
+www    A       199.34.228.68
+*      A       199.34.228.68   (unchanged)
+conferencia2026 CNAME bfa07c7521b3bfaf.vercel-dns-017.com (unchanged)
+2026 resolved through the unchanged wildcard; no explicit 2026 record existed in the displayed zone.
+The public authoritative nameservers were dns223.a.register.com, dns017.b.register.com, dns018.c.register.com, dns177.d.register.com. They were not changed.
+
+MIGRATION WEBSITE DNS
+@       A       75.2.60.5
+www     CNAME   keen-faun-89f080.netlify.app
+old     A       199.34.228.79
+www.old CNAME   old.mastersargentina.org
+The old/www.old records were created by Weebly when connecting the archive hostname.
+
+VALIDATION AND BACKUPS
+- Pre-migration Netlify commit: a21a12a1adda7593bc791a3b05c07421768fca70.
+- Migration content commit: 124ae1c.
+- 57 original addresses inventoried in docs/legacy-redirects.csv; all 57 archive pages returned HTTPS 200 after relocation.
+- All 57 main-site paths plus 3 /oldpage cases passed checks against the deployed Netlify preview (60 cases).
+- New site's 16 static routes passed metadata/link checks and 6 SEO unit tests.
+- The newsletter page preserves the original form actions and form IDs. No live form submission was made, to avoid creating an unwanted subscription or contact message.
+- Saved pre-migration HTML is a supplementary content snapshot, not a complete portable backup of Weebly's forms/database. The live original Weebly site is the functional recovery copy.
+- Verify HTTPS, primary hostname, final public routes and redirects after DNS propagation before declaring the main-domain migration complete.

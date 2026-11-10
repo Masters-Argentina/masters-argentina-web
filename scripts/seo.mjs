@@ -2,7 +2,7 @@
  * A future custom-domain migration must update SITE_ORIGIN and its redirects together.
  * Structured data is limited to facts already present in the rendered page.
  */
-export const SITE_ORIGIN = 'https://keen-faun-89f080.netlify.app';
+export const SITE_ORIGIN = 'https://www.mastersargentina.org';
 export const DEFAULT_IMAGE = 'https://res.cloudinary.com/lzfq7irq/image/upload/c_limit,w_1200/q_auto/f_jpg/v1794327840/masters-argentina/conference-2026/2026-galeria-comunidad-ccb6cb7edd7c.jpg';
 const LOGO = 'https://res.cloudinary.com/lzfq7irq/image/upload/v1794327860/masters-argentina/branding-and-general/masters-logo-hq-d9c0fc269d8f.png';
 const SITE_NAME = 'Masters Argentina';

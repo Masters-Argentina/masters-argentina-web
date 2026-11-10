@@ -2,7 +2,7 @@ MASTERS ARGENTINA — DOMAIN MIGRATION AND RECOVERY
 Prepared November 10, 2026. These are recovery instructions, not an automatic rollback.
 
 HOSTS
-New site: https://mastersargentina.org/ (Netlify primary; www redirects here; HTTPS must be verified after propagation)
+New site: https://mastersargentina.org/ (Netlify primary; www redirects here; HTTPS verified November 10, 2026 at 22:13 UTC)
 Netlify preview: https://keen-faun-89f080.netlify.app/
 Original Weebly site: https://old.mastersargentina.org/
 Archive shortcut: /oldpage -> https://old.mastersargentina.org/ (302)
@@ -32,7 +32,7 @@ www    A       199.34.228.68
 *      A       199.34.228.68   (unchanged)
 conferencia2026 CNAME bfa07c7521b3bfaf.vercel-dns-017.com (unchanged)
 2026 resolved through the unchanged wildcard; no explicit 2026 record existed in the displayed zone.
-The public authoritative nameservers were dns223.a.register.com, dns017.b.register.com, dns018.c.register.com, dns177.d.register.com. They were not changed.
+Nameservers were not changed. Direct .org parent checks on November 10 confirmed delegation to dns1.register.com (162.159.27.248) and dns2.register.com (162.159.26.197). The child zone's own NS answers advertise dns223.a.register.com, dns017.b.register.com, dns018.c.register.com and dns177.d.register.com. Both sets were checked; do not replace the registrar's nameservers based on the differing child-zone NS answer.
 
 MIGRATION WEBSITE DNS
 @       A       75.2.60.5
@@ -49,4 +49,5 @@ VALIDATION AND BACKUPS
 - New site's 16 static routes passed metadata/link checks and 6 SEO unit tests.
 - The newsletter page preserves the original form actions and form IDs. No live form submission was made, to avoid creating an unwanted subscription or contact message.
 - Saved pre-migration HTML is a supplementary content snapshot, not a complete portable backup of Weebly's forms/database. The live original Weebly site is the functional recovery copy.
-- Verify HTTPS, primary hostname, final public routes and redirects after DNS propagation before declaring the main-domain migration complete.
+- Main-domain migration verified November 10, 2026 at 22:13 UTC with certificate validation enabled. Netlify-managed Let's Encrypt covers mastersargentina.org and www.mastersargentina.org; expiration February 8, 2027 with automatic renewal shown in Netlify. HTTP redirects to HTTPS; www redirects to the apex; homepage, /oldpage, /oldpage/, contact page and newsletter destination passed. No form was submitted.
+- Netlify serves its ordinary Strict-Transport-Security header (max-age=31536000) on the custom names. No includeSubDomains or preload policy was added. Keep valid HTTPS on any rollback destination.

@@ -63,14 +63,14 @@ Many images have logical paths in the HTML that are translated to optimized loca
 
 - Saved the published page as `index.html`.
 - Downloaded all 720 files listed in the site's asset manifest, plus the carousel JS/CSS, favicon, and remotely hosted Miami hero image (724 downloaded files in total).
-- Kept embedded SVGs and base64 images in the HTML.
+- Kept embedded SVGs in the HTML; the repeated base64 logo now uses Cloudinary.
 - Changed the working-document link and its return links to relative paths, so they work under `/YOUR-REPOSITORY/`.
 - Replaced the externally hosted Miami hero image with a local copy.
 - Removed Netlify's injected promotional script from both HTML pages.
 
 ## External content and original behavior
 
-The main website's images and layout assets are bundled locally. YouTube videos and two Google Slides presentations remain external embeds, and require internet access. Newsletter signup, social profiles, official conference sites, and the external photo album remain links to their original services. Email links open the visitor's email application. This static copy does not include the databases or backend services of those external sites.
+Current-section images are served from Cloudinary; historical-archive images and layout assets remain bundled locally. YouTube videos and two Google Slides presentations remain external embeds, and require internet access. Newsletter signup, social profiles, official conference sites, and the external photo album remain links to their original services. Email links open the visitor's email application. This static copy does not include the databases or backend services of those external sites.
 
 The source's disabled ticket-purchase buttons, example-data labels, and historical navigation behavior are preserved. This package is a recovery of the public deployed site, not a redesign or a recovery of its original private development repository.
 
@@ -84,3 +84,13 @@ The source's disabled ticket-purchase buttons, example-data labels, and historic
 - No browser console errors or broken loaded images were observed during those checks. External service submissions and video/presentation playback were not tested.
 
 Source: https://darling-kataifi-d913db.netlify.app/masters_argentina_fran_10-28-2026
+
+## Cloudinary images
+
+The current sections (Home, About/team, Conference 2027, Contact, and Miami 2026) use 115 unique images in Cloudinary cloud `lzfq7irq`, organized under `masters-argentina/`. Historical editions use their existing local image references. External albums, institutional sites, videos, and presentation links remain unchanged. Original image files are kept as backups.
+
+`cloudinary-images.json` lists the current local-path-to-delivery-URL mapping. The same mapping is embedded as `CLOUDINARY_IMAGES` in `index.html` so the site also works when opened directly. When changing an image, upload it to the appropriate Cloudinary folder, copy its HTTPS delivery URL, and update both mappings. Prefer a new asset/version URL for replacements so browsers load the new image immediately. SVGs and the favicon retain their original formats; raster photos use Cloudinary automatic format/quality and a maximum width of 1600px.
+
+Only public delivery URLs are part of this repository. No Cloudinary credentials are needed in GitHub, Netlify, or browser code.
+
+For Netlify, import this repository, leave the build command empty, and publish the repository root (`.`). No environment variables or build dependencies are required.

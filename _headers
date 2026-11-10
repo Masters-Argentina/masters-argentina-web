@@ -1,0 +1,15 @@
+# Keep source files and the internal working document out of search results.
+/source/*
+  X-Robots-Tag: noindex
+/scripts/*
+  X-Robots-Tag: noindex
+/docs/*
+  X-Robots-Tag: noindex
+/informe
+  X-Robots-Tag: noindex
+/informe.html
+  X-Robots-Tag: noindex
+/README.md
+  X-Robots-Tag: noindex
+/cloudinary-images.json
+  X-Robots-Tag: noindex

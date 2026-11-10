@@ -1,104 +1,58 @@
 # Masters Argentina
 
-Portable copy of the published Masters Argentina project, downloaded on November 10, 2026.
+Static website for Masters Argentina. Production: https://keen-faun-89f080.netlify.app/
 
-This is a static website: no installation, build step, Node.js, database, or Netlify account is required. The original Spanish content, design, and client-side navigation are preserved.
+Netlify deploys `main` from `Masters-Argentina/masters-argentina-web` automatically. The public pages contain their content in the delivered HTML; JavaScript enhances menus, carousels and interactions. No database, frontend framework or Cloudinary credentials are required.
 
-## Netlify production deployment
+## Edit and publish
 
-Production URL: https://keen-faun-89f080.netlify.app/
+1. Edit content and presentation in `source/site.html`. It is the shared source of the existing layouts, not a public landing page.
+2. Edit titles, descriptions and structured-data rules in `scripts/seo.mjs`. Its `SITE_ORIGIN` is the production origin for canonical URLs, social metadata and the sitemap.
+3. Run `node scripts/build.mjs` using Node.js 22 or newer. The build uses only Node's standard library and needs no package installation.
+4. Review and commit both source changes and regenerated files. Push or merge into `main`.
+5. Netlify runs the build and publishes the repository root. Follow progress in the [deploy dashboard](https://app.netlify.com/projects/keen-faun-89f080/deploys).
 
-Netlify project `keen-faun-89f080` deploys the `main` branch of `Masters-Argentina/masters-argentina-web`. Push or merge changes into `main` to publish an update automatically. Watch progress in the [Netlify deploy dashboard](https://app.netlify.com/projects/keen-faun-89f080/deploys).
+Generated files should not be edited directly: root `index.html`, section/year `index.html` pages, `assets/site.css`, `assets/site-runtime.js`, `sitemap.xml`, and `robots.txt`. The existing GitHub Pages branch-root deployment serves the committed generated pages too; their canonicals point to Netlify.
 
-`netlify.toml` keeps the publish directory at the repository root (`.`) and the build command empty. No environment variables or Cloudinary credentials are required. The existing GitHub Pages site remains available.
+## URLs
 
-## Publish on GitHub Pages
+- `/`: home
+- `/quienes-somos/`: community and team
+- `/conferencia/`: next conference
+- `/contacto/`: contact and FAQs (`#contact-preguntas`)
+- `/ediciones/`: historical timeline and archive
+- `/ediciones/2016/` through `/ediciones/2026/`: individual editions
 
-1. Extract `masters-argentina-github.zip`.
-2. Create a repository on your GitHub account. A public repository works with GitHub Free.
-3. Copy the **contents** of the extracted `masters-argentina` folder into your repository. `index.html`, `carousels.css`, `carousels.js`, `informe.html`, and `assets/` must sit at the repository root. Include the hidden `.nojekyll` file.
-4. Commit and push the files to your `main` branch.
-5. Open the repository's **Settings → Pages**. Under **Build and deployment**, choose **Deploy from a branch**, then **main** and **/(root)**. Click **Save**.
-6. After deployment completes, use the website URL shown in Pages settings. For a normal project repository, it looks like `https://YOUR-USERNAME.github.io/YOUR-REPOSITORY/`.
+Old hash-route bookmarks continue to work through a small compatibility script. Normal in-page anchors remain anchors. Real internal links work without JavaScript. Unsupported URLs are not rewritten to the homepage.
 
-Upload the extracted files, not the ZIP itself. This project contains more than 700 files, so use GitHub Desktop or Git instead of a single browser upload; GitHub's web uploader accepts at most 100 files at once.
+## Preview locally
 
-### Using GitHub Desktop
-
-Create or clone your repository in GitHub Desktop, open its local folder, and copy the extracted site's contents into it. Commit the changes and choose **Publish repository** or **Push origin**, as appropriate. Then enable Pages using step 5 above.
-
-### Using the command line with a new, empty repository
-
-Run these commands inside the extracted `masters-argentina` directory. Replace both placeholders in the remote URL with your actual GitHub username and repository name.
-
-```sh
-git init
-git add .
-git commit -m "Add Masters Argentina website"
-git branch -M main
-git remote add origin https://github.com/YOUR-USERNAME/YOUR-REPOSITORY.git
-git push -u origin main
-```
-
-For an existing repository, clone it first, copy these files into it, then commit and push normally.
-
-Official instructions: [Configure GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site) · [Upload files to GitHub](https://docs.github.com/en/repositories/working-with-files/managing-files/adding-a-file-to-a-repository).
-
-## Preview on your computer
-
-You can open `index.html` in your browser. For a preview served over HTTP, run this inside the site folder if Python 3 is installed:
+After building, serve the repository root:
 
 ```sh
 python3 -m http.server 8000 --bind 127.0.0.1
 ```
 
-Then visit `http://127.0.0.1:8000/`. Stop the server with Ctrl+C.
+Visit `http://127.0.0.1:8000/`. Nested pages also work when the whole site is served below a subdirectory, as on GitHub Pages.
 
-## Files and editing
+## Images
 
-- `index.html`: the main page, styling, JavaScript, page templates, historical content, and asset-path manifest.
-- `carousels.css` and `carousels.js`: shared carousel styles and controls.
-- `assets/`: downloaded images, logos, portraits, historical files, and a PDF.
-- `favicon.webp`: browser icon.
-- `informe.html`: the original linked proposal/working document.
-- `.nojekyll`: tells GitHub Pages to serve the static files without Jekyll processing.
+115 unique images used in the current sections are hosted in Cloudinary cloud `lzfq7irq` under `masters-argentina/`. Historical-archive images retain their existing local files. External albums, institutional sites, videos, presentations and signup links retain their original destinations. Original image files remain in this repository as backups.
 
-The main sections use hash routes, including `#inicio`, `#quienes-somos`, `#conferencia`, `#contacto`, `#ediciones`, and `#ediciones/2026`. These work under a GitHub repository subdirectory without server rewrite rules. The original dated Netlify pathname has been replaced by the site's root `index.html` entry point.
+`cloudinary-images.json` records the delivery URL mapping; the source template contains the runtime-source equivalent as `CLOUDINARY_IMAGES`. When replacing an image, upload the new image, update both mappings, and update its dimensions in `scripts/image-dimensions.json` if necessary. Rebuild afterward. Use a new asset/version URL for a replacement so it is immediately distinguishable from cached images. Raster delivery uses automatic format/quality; SVGs and the favicon retain their original formats. Do not upload the historical library without a new request.
 
-Many images have logical paths in the HTML that are translated to optimized local files by `ASSET_PATHS` and `portableHTML`. Keep that mapping intact when editing. Search `index.html` for the text you want to change. Configuration for the next conference is near `const CONFERENCIA`; some event copy is also written directly into the page templates.
+## Technical SEO
 
-## What was changed for portability
+Each of the 16 public pages has a title, description, canonical URL, Open Graph and Twitter metadata. Organization JSON-LD is shared; FAQ markup matches the visible answered questions on Contact. Historical Event markup is emitted only when exact dates and venue information exist. Planned 2027 dates and incomplete 2020/2021 event information are not promoted to complete Event markup.
 
-- Saved the published page as `index.html`.
-- Downloaded all 720 files listed in the site's asset manifest, plus the carousel JS/CSS, favicon, and remotely hosted Miami hero image (724 downloaded files in total).
-- Kept embedded SVGs in the HTML; the repeated base64 logo now uses Cloudinary.
-- Changed the working-document link and its return links to relative paths, so they work under `/YOUR-REPOSITORY/`.
-- Replaced the externally hosted Miami hero image with a local copy.
-- Removed Netlify's injected promotional script from both HTML pages.
+The home heading includes accessible brand text while preserving the logo appearance. Images have explicit dimensions where known, deferred loading where appropriate, and separate delivery URLs. Shared styling and behavior are cacheable files rather than duplicated template/data scripts.
 
-## External content and original behavior
+`_headers` prevents indexing of source, scripts, documentation and the internal working document. `_redirects` contains only compatibility aliases for this recovered site. See [SEO rollout notes](docs/seo-rollout.md) for the remaining domain and editorial decisions.
 
-Current-section images are served from Cloudinary; historical-archive images and layout assets remain bundled locally. YouTube videos and two Google Slides presentations remain external embeds, and require internet access. Newsletter signup, social profiles, official conference sites, and the external photo album remain links to their original services. Email links open the visitor's email application. This static copy does not include the databases or backend services of those external sites.
+## Validation
 
-The source's disabled ticket-purchase buttons, example-data labels, and historical navigation behavior are preserved. This package is a recovery of the public deployed site, not a redesign or a recovery of its original private development repository.
+Run `node --test scripts/seo.test.mjs` after metadata changes. For the full generated-page audit, install the optional local checker dependency with `python3 -m pip install beautifulsoup4`, then run `python3 scripts/verify-site.py --site .`. Repeat with `--base-path /masters-argentina-web/` to check subdirectory links. The checker can accept `--baseline` and `--baseline-rendered` when comparing an earlier release. These checks are for local development; Netlify needs no Python dependencies.
 
-## Verification
+## Origin and scope
 
-- Every asset-manifest destination is present locally; all 724 downloads succeeded.
-- All 702 raster image files and 18 SVG files passed file-format validation; the bundled PDF has a valid PDF header.
-- JavaScript syntax checks passed.
-- The site was previewed locally under `/masters-argentina/`, matching the subdirectory structure of GitHub project Pages.
-- Home, About, Conference 2027, Contact, historical editions, Miami 2026, and the working document rendered successfully. Carousel pause and FAQ expansion were exercised.
-- No browser console errors or broken loaded images were observed during those checks. External service submissions and video/presentation playback were not tested.
-
-Source: https://darling-kataifi-d913db.netlify.app/masters_argentina_fran_10-28-2026
-
-## Cloudinary images
-
-The current sections (Home, About/team, Conference 2027, Contact, and Miami 2026) use 115 unique images in Cloudinary cloud `lzfq7irq`, organized under `masters-argentina/`. Historical editions use their existing local image references. External albums, institutional sites, videos, and presentation links remain unchanged. Original image files are kept as backups.
-
-`cloudinary-images.json` lists the current local-path-to-delivery-URL mapping. The same mapping is embedded as `CLOUDINARY_IMAGES` in `index.html` so the site also works when opened directly. When changing an image, upload it to the appropriate Cloudinary folder, copy its HTTPS delivery URL, and update both mappings. Prefer a new asset/version URL for replacements so browsers load the new image immediately. SVGs and the favicon retain their original formats; raster photos use Cloudinary automatic format/quality and a maximum width of 1600px.
-
-Only public delivery URLs are part of this repository. No Cloudinary credentials are needed in GitHub, Netlify, or browser code.
-
-For Netlify, import this repository, leave the build command empty, and publish the repository root (`.`). No environment variables or build dependencies are required.
+Recovered from `https://darling-kataifi-d913db.netlify.app/masters_argentina_fran_10-28-2026` on November 10, 2026. The design, visible content, disabled-ticket behavior and external services are preserved. This repository does not include the backend or private source of linked external sites.

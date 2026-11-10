@@ -1,0 +1,12 @@
+/* Native horizontal scrolling keeps touch, trackpad and keyboard navigation available. */
+.carousel-shell{min-width:0;width:100%}
+.carousel-shell .home-logo-window,.carousel-shell .conference-circle-window{overflow-x:auto;overflow-y:hidden;mask-image:none;scrollbar-width:none;cursor:grab;overscroll-behavior-x:contain}
+.carousel-shell .home-logo-track,.carousel-shell .conference-circle-track{animation:none!important;transform:none!important}
+.carousel-shell img{user-select:none;-webkit-user-drag:none}
+.carousel-shell .is-dragging{cursor:grabbing;user-select:none}
+.carousel-controls{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}
+.carousel-arrow{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border:1px solid #8caeb6;border-radius:50%;background:transparent;color:inherit;font:24px/1 Arial,sans-serif;cursor:pointer}
+.carousel-arrow:hover{background:#6e969f24}
+.carousel-arrow:focus-visible,.carousel-shell [role=region]:focus-visible{outline:3px solid var(--turquoise,#05b5c9);outline-offset:3px}
+.carousel-shell ::-webkit-scrollbar{display:none;width:0;height:0}
+@media(prefers-reduced-motion:reduce){.carousel-shell .home-logo-track ul[aria-hidden=true],.carousel-shell .conference-circle-group[aria-hidden=true]{display:none}}

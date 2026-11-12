@@ -6,6 +6,7 @@ import path from 'node:path';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
 import { buildSeoHead, buildSitemap, buildRobots } from './seo.mjs';
+import { renderEventInvitation, renderEventInvitationLink } from './event-invitation.mjs';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const source = fs.readFileSync(path.join(root, 'source/site.html'), 'utf8');
 const scripts = [...source.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)];
@@ -124,6 +125,16 @@ for (const route of routes) {
  const prefix = path.relative(path.dirname(file), root).split(path.sep).join('/') + '/';
  const rootPrefix = prefix === '/' ? './' : prefix;
  let main = route.expression ? render(route.expression) : pageForYear(route.year, route.edition);
+ const invitation = route.url === '/' ? renderEventInvitation() : '';
+ if (invitation) {
+  // La presentación de Masters sigue primero; el evento es el segundo bloque.
+  const nextSection = '<section class="home-event"';
+  const previousLink = '<a class="text-link" href="#ediciones/2026">Conocé la conferencia 2026 →</a>';
+  if (!main.includes(nextSection) || !main.includes(previousLink)) throw Error('No se encontró el punto de integración de la invitación.');
+  main = main.replace(nextSection, invitation + '\n' + nextSection)
+   .replace(previousLink, renderEventInvitationLink())
+   .replace('El próximo encuentro', 'La próxima conferencia');
+ }
  main = transformHtml(main, route, rootPrefix);
  let shell = source.replace(/<script\b[^>]*>[\s\S]*?<\/script>/g, '').replace(/<style\b[^>]*>[\s\S]*?<\/style>/g, '');
  // The source is not a public landing page. Its noindex directive must not
@@ -139,6 +150,8 @@ for (const route of routes) {
  shell = shell.replace(/(<nav\b[^>]*id="main-nav"[^>]*>)([\s\S]*?)(<\/nav>)/, (all,start,content,end) => start + content.replace(/<a\b([^>]*?)href="([^"]+)"([^>]*)>/g,(m,a,href,b)=>href===rootPrefix+navPath.slice(1)?`<a${a}href="${href}"${b} aria-current="page">`:m).replace('class="editions-toggle"',`class="editions-toggle${route.url.startsWith('/ediciones/')?' is-current':''}"`) + end);
  const metadata = buildSeoHead({path:route.url, html:main, edition:route.edition, image:route.edition?.cover ? (assetMap[route.edition.cover] || route.edition.cover) : undefined});
  shell = shell.replace('</head>', metadata + `\n<link rel="stylesheet" href="${rootPrefix}assets/site.css">\n</head>`);
+ if (route.url === '/') shell = shell.replace('</head>', `<link rel="stylesheet" href="${rootPrefix}assets/event-invitation.css">\n</head>`);
+ if (invitation) shell = shell.replace('</body>', `<script src="${rootPrefix}assets/event-invitation.js" defer></script>\n</body>`);
  shell = shell.replace('</body>', `<script src="${rootPrefix}carousels.js" defer></script>\n<script src="${rootPrefix}assets/site-runtime.js" defer></script>\n</body>`);
  fs.mkdirSync(path.dirname(file),{recursive:true});fs.writeFileSync(file,shell);
 }

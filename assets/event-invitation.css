@@ -1,0 +1,94 @@
+/* Acceso secundario en el hero; la presentación de Masters conserva su jerarquía. */
+.home-intro-actions .home-invitation-link { display:inline-flex; flex-direction:column; justify-content:center; align-items:flex-start; min-height:54px; max-width:100%; gap:3px; padding:4px 0; color:#17626e; border-bottom:1px solid #8cbdc4; }
+.home-invitation-link>span { font-size:14px; line-height:1.4; font-weight:600; }
+.home-invitation-link small { font-size:12px; line-height:1.5; color:#44616c; }
+.home-invitation-link small strong { color:#72550e; font-weight:700; }
+.home-invitation-link:hover { color:#102c3b; border-color:#102c3b; }
+.home-invitation-link:focus-visible { outline:3px solid #007e8a; outline-offset:5px; }
+
+/* Segundo bloque, integrado a la portada y sin elementos superpuestos. */
+.event-invitation { background:#f4f8f8; padding:32px max(24px,calc((100vw - 1240px)/2)); scroll-margin-top:12px; }
+.event-invitation[hidden] { display:none; }
+.event-invitation-inner { background:#fff; border:1px solid #d5e3e5; border-radius:14px; box-shadow:0 6px 24px rgba(16,44,59,.045); padding:23px 28px 19px; }
+.event-invitation-heading { display:flex; align-items:center; justify-content:space-between; gap:20px; margin-bottom:24px; padding-bottom:18px; border-bottom:1px solid #e5edef; }
+.event-invitation-brands { display:flex; align-items:center; gap:21px; flex-shrink:0; }
+.event-invitation-brands img { object-fit:contain; display:block; }
+.event-invitation-brands .invitation-masters { width:134px; height:50px; }
+.event-invitation-brands .invitation-ypf { width:75px; height:27px; }
+.invitation-brand-divider { width:1px; height:30px; background:#d5e1e4; }
+.invitation-kicker { font:700 11px/1.6 Arial,Helvetica,sans-serif; letter-spacing:.09em; text-transform:uppercase; color:#44616c; margin:0; text-align:right; }
+.invitation-kicker>span { margin:0 6px; }
+.event-invitation-grid { display:grid; grid-template-columns:minmax(0,1.55fr) minmax(0,1fr) 188px; gap:28px; align-items:center; }
+.invitation-speaker { display:flex; align-items:center; gap:18px; margin-bottom:17px; }
+.invitation-speaker .invitation-portrait { display:block; flex:0 0 86px; width:86px; height:86px; border-radius:50%; object-fit:cover; border:4px solid #fff; box-shadow:0 0 0 1px #cbdfe2,0 4px 10px rgba(16,44,59,.08); }
+.event-invitation .event-invitation-copy h2 { font:400 clamp(27px,2.5vw,35px)/1.13 Georgia,'Times New Roman',serif; letter-spacing:-.035em; margin:0; color:#102c3b; }
+.event-invitation-copy h2 span { display:block; white-space:nowrap; }
+.invitation-program { font-size:15px; line-height:1.5; margin:0 0 8px; color:#294854; }
+.invitation-program strong { font-weight:600; }
+.invitation-community { font-size:14px; line-height:1.5; margin:0; color:#4e646d; }
+.event-invitation-details { border-left:1px solid #d5e1e4; padding-left:27px; }
+.invitation-date { font-size:16px; line-height:1.5; font-weight:700; margin:0 0 10px; }
+.invitation-date>span { display:block; font-size:15px; font-weight:400; margin-top:3px; }
+.invitation-timezone { display:block; font-size:12px; color:#526772; }
+.invitation-location { font-size:14px; line-height:1.5; margin:0; }
+.invitation-location strong,.invitation-location>span { display:block; }
+.invitation-location>span { color:#4e646d; }
+.event-invitation-action { display:flex; flex-direction:column; align-items:stretch; gap:12px; text-align:center; }
+.invitation-capacity { align-self:center; display:inline-flex; align-items:center; gap:7px; font-size:13px; font-weight:700; line-height:1.4; color:#614b0c; background:#fff2bd; border:1px solid #f0dfa0; padding:7px 12px; border-radius:20px; }
+.invitation-capacity:before { content:''; width:6px; height:6px; border-radius:50%; background:#9a7415; }
+.invitation-register { display:inline-flex; justify-content:center; align-items:center; gap:24px; min-height:54px; background:#f5cc28; color:#102c3b; padding:13px 18px; font-size:16px; line-height:1.5; font-weight:700; border:1px solid #b49318; border-radius:7px; box-shadow:0 3px 0 #b49318; text-decoration:none; }
+.invitation-register:hover { background:#ffda48; border-color:#927411; text-decoration:none; }
+.invitation-register:active { background:#e9bd20; box-shadow:0 1px 0 #b49318; }
+.invitation-register:focus-visible { outline:3px solid #147b89; outline-offset:4px; }
+.event-invitation-action small { color:#526772; font-size:12px; line-height:1.5; }
+.invitation-audience { margin:18px 0 0; padding-top:13px; border-top:1px solid #e1e9eb; font-size:13px; line-height:1.55; color:#4e646d; }
+.invitation-audience strong { color:#294854; }
+@media(max-width:1100px) {
+ .event-invitation-grid { grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) 166px; gap:20px; }
+ .event-invitation-details { padding-left:20px; }
+ .event-invitation-inner { padding:20px; }
+ .event-invitation-copy h2 span { white-space:normal; }
+ .invitation-speaker { gap:14px; }
+ .invitation-speaker .invitation-portrait { width:72px; height:72px; flex-basis:72px; }
+}
+@media(max-width:800px) {
+ .event-invitation { padding:18px 24px; }
+ .event-invitation-heading { gap:12px; }
+ .invitation-kicker { max-width:185px; font-size:10px; }
+ .event-invitation-grid { grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:20px; align-items:start; }
+ .event-invitation-copy { grid-column:1/-1; }
+ .event-invitation-details { border:0; padding:0; }
+ .event-invitation-action { align-self:center; }
+ .event-invitation .event-invitation-copy h2 { font-size:32px; }
+ .invitation-speaker .invitation-portrait { width:80px; height:80px; flex-basis:80px; }
+}
+@media(max-width:480px) {
+ .event-invitation { padding:16px; }
+ .event-invitation-inner { padding:16px; }
+ .event-invitation-heading { flex-wrap:wrap; margin-bottom:21px; padding-bottom:15px; gap:11px; }
+ .event-invitation-brands { gap:17px; }
+ .event-invitation-brands .invitation-masters { width:121px; height:45px; }
+ .event-invitation-brands .invitation-ypf { width:68px; height:24px; }
+ .invitation-kicker { max-width:none; text-align:left; font-size:10px; letter-spacing:.05em; }
+ .event-invitation .event-invitation-copy h2 { font-size:29px; margin:0; }
+ .invitation-speaker { gap:15px; margin-bottom:17px; }
+ .invitation-speaker .invitation-portrait { width:72px; height:72px; flex-basis:72px; border-width:3px; }
+ .event-invitation-grid { gap:16px 12px; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); }
+ .invitation-date { font-size:14px; }
+ .invitation-date>span { font-size:13px; }
+ .invitation-timezone { font-size:11px; }
+ .invitation-location { font-size:13px; }
+ .invitation-register { padding:12px; gap:10px; font-size:15px; }
+ .invitation-capacity { font-size:12px; padding:5px 7px; }
+ .event-invitation-action small { font-size:12px; }
+ .invitation-desktop-break { display:none; }
+ .invitation-audience { font-size:12px; margin-top:16px; }
+}
+@media(max-width:350px) {
+ .event-invitation-grid { grid-template-columns:1fr; }
+ .event-invitation-action { align-items:stretch; }
+ .invitation-date { font-size:15px; }
+ .invitation-speaker { gap:12px; }
+ .invitation-speaker .invitation-portrait { width:64px; height:64px; flex-basis:64px; }
+ .event-invitation .event-invitation-copy h2 { font-size:25px; }
+}

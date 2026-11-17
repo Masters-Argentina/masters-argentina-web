@@ -212,7 +212,7 @@ fs.writeFileSync(path.join(root,'scripts/generated-routes.json'),JSON.stringify(
 
 // Netlify publishes only dist/. Templates, scripts, docs and data files stay private;
 // anything new must be added here on purpose to become public.
-const PUBLIC_FILES = ['index.html', 'informe.html', 'favicon.webp', 'carousels.css', 'carousels.js',
+const PUBLIC_FILES = ['index.html', 'informe.html', 'favicon.ico', 'favicon.webp', 'carousels.css', 'carousels.js',
  'robots.txt', 'sitemap.xml', '_headers', '_redirects', 'assets',
  ...new Set(routes.filter(r => r.url !== '/').map(r => r.url.split('/')[1]))];
 const dist = path.join(root, 'dist');

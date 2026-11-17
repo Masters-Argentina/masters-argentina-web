@@ -45,6 +45,8 @@ Visit `http://127.0.0.1:8000/`. Nested pages also work when the whole site is se
 
 `cloudinary-images.json` records the delivery URL mapping; the source template contains the runtime-source equivalent as `CLOUDINARY_IMAGES`. When replacing an image, upload the new image, update both mappings, and update its dimensions in `scripts/image-dimensions.json` if necessary. Rebuild afterward. Use a new asset/version URL for a replacement so it is immediately distinguishable from cached images. Raster delivery uses automatic format/quality; SVGs and the favicon retain their original formats. Do not upload the historical library without a new request.
 
+Favicons (`favicon.ico`, `assets/icons/`) are the logo mark on a white rounded square; regenerate them with `scripts/make-icons.py` if the logo changes.
+
 Social previews (`og:image`) are 1200×630 JPEGs. Cloudinary images are cropped automatically. A local edition cover needs a pre-cropped copy in `assets/og/<same name>.jpg`; without one the build warns and uses the default image. On macOS, resize so the image covers 1200×630 (`sips --resampleWidth 1200` or `--resampleHeight 630`), then `sips -s format jpeg --cropToHeightWidth 630 1200`.
 
 ## Technical SEO

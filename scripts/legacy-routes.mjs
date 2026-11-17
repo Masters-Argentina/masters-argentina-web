@@ -27,5 +27,6 @@ export function routeHref(value) {
  const [,section,detail] = match;
  if (section === 'contacto' && detail) return `contacto/#contact-${detail}`;
  if (section === 'ediciones' && detail) return `ediciones/${detail}/`;
+ if (section === 'prensa' && detail) return `prensa/#prensa-${detail}`;
  return `${section}/`;
 }

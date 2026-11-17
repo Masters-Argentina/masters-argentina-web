@@ -42,6 +42,7 @@ test('template hash links become static hrefs relative to the site root', () => 
   assert.equal(routeHref('#contact-preguntas'), '#contact-preguntas');
   assert.equal(routeHref('#preguntas-frecuentes'), 'preguntas-frecuentes/');
   assert.equal(routeHref('#prensa'), 'prensa/');
+  assert.equal(routeHref('#prensa/2019'), 'prensa/#prensa-2019');
 });
 
 test('the browser runtime ships the same legacyDestination as the tested module', () => {

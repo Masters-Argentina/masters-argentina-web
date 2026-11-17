@@ -122,10 +122,10 @@ window.addEventListener('load',scheduleHeaderBrandUpdate);
 function legacyDestination(hash) {
  const [section, detail] = hash.slice(1).split('/');
  if (section === 'inicio') return '';
- if (section === 'faq') return 'contacto/#contact-preguntas';
+ if (section === 'faq') return 'preguntas-frecuentes/';
  if (section === 'alumni') return 'contacto/';
  if (section === 'apoyar') return 'contacto/#contact-sponsors';
- if (['quienes-somos', 'conferencia'].includes(section) && !detail) return section + '/';
+ if (['quienes-somos', 'conferencia', 'preguntas-frecuentes', 'prensa'].includes(section) && !detail) return section + '/';
  if (section === 'contacto') return 'contacto/' + (['sumarse','newsletter','sponsors','preguntas'].includes(detail) ? '#contact-' + detail : '');
  if (section === 'ediciones') return 'ediciones/' + (/^20(?:1[6-9]|2[0-6])$/.test(detail || '') ? detail + '/' : '');
  return null;

@@ -21,7 +21,9 @@ Generated files should not be edited directly: root `index.html`, section/year `
 - `/`: home
 - `/quienes-somos/`: community and team
 - `/conferencia/`: next conference
-- `/contacto/`: contact and FAQs (`#contact-preguntas`)
+- `/contacto/`: contact (FAQ block at `#contact-preguntas`)
+- `/preguntas-frecuentes/`: frequently asked questions (FAQPage)
+- `/prensa/`: press coverage by edition (`scripts/press.mjs`)
 - `/ediciones/`: historical timeline and archive
 - `/ediciones/2016/` through `/ediciones/2026/`: individual editions
 
@@ -43,11 +45,11 @@ Visit `http://127.0.0.1:8000/`. Nested pages also work when the whole site is se
 
 `cloudinary-images.json` records the delivery URL mapping; the source template contains the runtime-source equivalent as `CLOUDINARY_IMAGES`. When replacing an image, upload the new image, update both mappings, and update its dimensions in `scripts/image-dimensions.json` if necessary. Rebuild afterward. Use a new asset/version URL for a replacement so it is immediately distinguishable from cached images. Raster delivery uses automatic format/quality; SVGs and the favicon retain their original formats. Do not upload the historical library without a new request.
 
-Social previews (`og:image`) are always JPEG. Cloudinary images are requested as 1200px JPEG automatically. A local edition cover needs a pre-converted copy in `assets/og/<same name>.jpg`; without one the build warns and uses the default image. On macOS: `sips -s format jpeg -s formatOptions 82 -Z 1200 assets/history/NAME.webp --out assets/og/NAME.jpg`.
+Social previews (`og:image`) are 1200×630 JPEGs. Cloudinary images are cropped automatically. A local edition cover needs a pre-cropped copy in `assets/og/<same name>.jpg`; without one the build warns and uses the default image. On macOS, resize so the image covers 1200×630 (`sips --resampleWidth 1200` or `--resampleHeight 630`), then `sips -s format jpeg --cropToHeightWidth 630 1200`.
 
 ## Technical SEO
 
-Each of the 16 public pages has a title, description, canonical URL, Open Graph and Twitter metadata. Organization JSON-LD is shared; FAQ markup matches the visible answered questions on Contact. Historical Event markup is emitted only when exact dates and venue information exist. Planned 2027 dates and incomplete 2020/2021 event information are not promoted to complete Event markup.
+Each of the 18 public pages follows the content brief «Contenido SEO para el nuevo sitio» (see `docs/seo-rollout.md`) and has a title, description, canonical URL, Open Graph and Twitter metadata. Organization JSON-LD is shared; FAQ markup matches the visible questions on `/preguntas-frecuentes/`; internal pages carry BreadcrumbList. Event markup comes from the brief's table in `scripts/seo.mjs` and must match each page's visible dates (the build fails otherwise). 2020, 2021 and 2027 have no Event until exact dates are confirmed.
 
 The home heading includes accessible brand text while preserving the logo appearance. Images have explicit dimensions where known, deferred loading where appropriate, and separate delivery URLs. Shared styling and behavior are cacheable files rather than duplicated template/data scripts.
 

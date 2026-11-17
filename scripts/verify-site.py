@@ -17,7 +17,7 @@ from urllib.parse import unquote, urljoin, urlparse
 import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
 
-REQUIRED = ['/', '/quienes-somos/', '/conferencia/', '/contacto/', '/ediciones/'] + [f'/ediciones/{year}/' for year in range(2016, 2027)]
+REQUIRED = ['/', '/quienes-somos/', '/conferencia/', '/contacto/', '/preguntas-frecuentes/', '/prensa/', '/ediciones/'] + [f'/ediciones/{year}/' for year in range(2016, 2027)]
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument('--site', type=Path, required=True)
 parser.add_argument('--baseline', type=Path)
@@ -128,14 +128,14 @@ for route in REQUIRED:
             if route=='/ediciones/2020/' and 'OnlineEventAttendanceMode' not in str(node):
                 check('EventCancelled' in str(node.get('eventStatus','')),f'{route}: canceled in-person event not marked canceled')
         if is_type(node,'FAQPage'):
-            check(route=='/contacto/',f'{route}: FAQPage schema attached to unexpected page')
+            check(route=='/preguntas-frecuentes/',f'{route}: FAQPage schema attached to unexpected page')
             for question in node.get('mainEntity',[]):
                 check(bool(question.get('name')),f'{route}: FAQ question missing name')
                 check(bool(question.get('acceptedAnswer',{}).get('text')),f'{route}: FAQ answer missing text')
                 q=BeautifulSoup(question.get('name',''),'html.parser').get_text(' ',strip=True)
                 visible=' '.join(s.get_text(' ',strip=True).split())
                 check(' '.join(q.split()) in visible,f'{route}: schema question absent from delivered visible text: {q}')
-    if route=='/contacto/':check(any(is_type(n,'FAQPage') for n in nodes),f'{route}: FAQPage JSON-LD missing')
+    if route=='/preguntas-frecuentes/':check(any(is_type(n,'FAQPage') for n in nodes),f'{route}: FAQPage JSON-LD missing')
     if route.startswith('/ediciones/') and route != '/ediciones/':
         year=int(route.strip('/').split('/')[-1])
         sections={str(x.get('id')) for x in s.select('.history-edition')}

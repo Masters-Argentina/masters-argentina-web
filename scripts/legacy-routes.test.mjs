@@ -8,7 +8,9 @@ test('old hash bookmarks map to the static pages that replaced them', () => {
     '#inicio': '',
     '#quienes-somos': 'quienes-somos/',
     '#conferencia': 'conferencia/',
-    '#faq': 'contacto/#contact-preguntas',
+    '#faq': 'preguntas-frecuentes/',
+    '#preguntas-frecuentes': 'preguntas-frecuentes/',
+    '#prensa': 'prensa/',
     '#alumni': 'contacto/',
     '#apoyar': 'contacto/#contact-sponsors',
     '#contacto': 'contacto/',
@@ -38,6 +40,8 @@ test('template hash links become static hrefs relative to the site root', () => 
   assert.equal(routeHref('#ediciones/2019'), 'ediciones/2019/');
   assert.equal(routeHref('#ediciones'), 'ediciones/');
   assert.equal(routeHref('#contact-preguntas'), '#contact-preguntas');
+  assert.equal(routeHref('#preguntas-frecuentes'), 'preguntas-frecuentes/');
+  assert.equal(routeHref('#prensa'), 'prensa/');
 });
 
 test('the browser runtime ships the same legacyDestination as the tested module', () => {

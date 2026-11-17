@@ -5,7 +5,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import vm from 'node:vm';
 import { fileURLToPath } from 'node:url';
-import { buildSeoHead, buildSitemap, buildRobots } from './seo.mjs';
+import { buildSeoHead, buildSitemap, buildRobots, PAGE_COPY, PERFORMERS_2026 } from './seo.mjs';
+import { PRESS } from './press.mjs';
 import { renderEventInvitation, renderEventInvitationLink } from './event-invitation.mjs';
 import { legacyDestination, routeHref } from './legacy-routes.mjs';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -36,7 +37,9 @@ const editions = vm.runInContext('JSON.parse(JSON.stringify(HISTORY_EDITIONS))',
 const render = expression => vm.runInContext(expression, context);
 const excerpt = (start, end) => { const from = mustFind(pageScript, start); return pageScript.slice(from, mustFind(pageScript, end, from)); };
 const originalStyles = [...source.matchAll(/<style\b[^>]*>([\s\S]*?)<\/style>/g)].map(m => m[1]).join('\n');
-const styles = originalStyles.replaceAll('.history-years button', '.history-years :is(button,a)') + '\n.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}\n.history-years a:hover{text-decoration:none}\n';
+const styles = originalStyles.replaceAll('.history-years button', '.history-years :is(button,a)') + '\n.sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}\n.history-years a:hover{text-decoration:none}\n' +
+ // Pages added for the SEO brief: FAQ and press.
+ '.contact-faq h1{font-size:clamp(40px,5vw,64px)}\n.press-page .section{padding-bottom:40px}\n.press-lead{font-size:19px;line-height:1.6;max-width:720px;color:var(--muted);margin:22px 0 0}\n.press-edition{border-top:1px solid var(--line);margin-top:56px;padding-top:34px}\n.press-edition h2{font-size:clamp(28px,3vw,39px)}\n.press-note{color:var(--muted);margin:12px 0 0}\n.press-list{list-style:none;padding:0;margin:26px 0 22px;display:grid;gap:0}\n.press-list li{display:flex;flex-direction:column;gap:6px;border-bottom:1px solid var(--line);padding:18px 0}\n.press-list a{font-family:Georgia,serif;font-size:21px;line-height:1.35;color:var(--ink)}\n.press-list a:hover{color:var(--turquoise)}\n.press-list span{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}\n';
 fs.writeFileSync(path.join(root, 'assets/site.css'), styles);
 const runtime = `'use strict';\n// Hydrate the server-delivered HTML without replacing its content.\n` +
 excerpt('function initAboutPage()', 'const archiveCircleRail') +
@@ -71,13 +74,43 @@ function edition2026() {
  const data = render('JSON.parse(JSON.stringify(EDITIONS["2026"]))');
  const heading = render('edition2026()').match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/)?.[1];
  if (!data || !heading) throw Error('Missing 2026 edition data or heading in source/site.html');
- return {year:2026, city:data.city, date:data.date, venue:data.venue, title:plainText(heading).replace(/\.$/, '')};
+ return {year:2026, city:data.city, date:data.date, venue:data.venue, title:plainText(heading).replace(/\.$/, ''), cover:'assets/external/hero-bg.jpg'};
+}
+/** /preguntas-frecuentes/ reuses the visible FAQ block of the contact template as its own page. */
+function faqPage() {
+ const section = render('contact()').match(/<section class="contact-faq" id="contact-preguntas">[\s\S]*?<\/section>/)?.[0];
+ if (!section) throw Error('Missing the FAQ section in the contact template');
+ return mustReplace(mustReplace(section, 'id="contact-preguntas"', 'id="preguntas"'),
+  '<h2>Preguntas frecuentes</h2>', `<h1>${escapeHtml(PAGE_COPY['/preguntas-frecuentes/'].h1)}</h1>`);
+}
+/** /prensa/ lists the coverage in scripts/press.mjs, edition by edition, linking each edition page. */
+function pressPage() {
+ const blocks = PRESS.map(block => `<section class="press-edition" aria-labelledby="prensa-${block.year}"><h2 id="prensa-${block.year}">${block.year} · ${escapeHtml(block.edition)} · ${escapeHtml(block.city)}</h2>` +
+  (block.note ? `<p class="press-note">${escapeHtml(block.note)}</p>` : '') +
+  `<ul class="press-list">${block.items.map(item => `<li><a href="${escapeHtml(item.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(item.title)} ↗</a><span>${escapeHtml(item.outlet)}${item.date ? ' · ' + escapeHtml(item.date) : ''}</span></li>`).join('')}</ul>` +
+  `<a class="text-link" href="#ediciones/${block.year}">Ver la edición ${block.year} →</a></section>`).join('');
+ return `<section class="press-page"><div class="section"><span class="eyebrow">Prensa</span><h1>${escapeHtml(PAGE_COPY['/prensa/'].h1)}</h1>` +
+  `<p class="press-lead">Notas sobre las conferencias de Masters Argentina en medios de Argentina y Uruguay, edición por edición.</p>${blocks}</div></section>`;
+}
+/** Speakers shown on the page, for Event.performer: the brief's 2026 list (checked against the page)
+ * or the named speaker cards of a historical edition. */
+function performersFor(route, main) {
+ if (route.year === 2026) {
+  const missing = PERFORMERS_2026.filter(name => !main.includes(name));
+  if (missing.length) throw Error(`2026 speakers not on the page: ${missing.join(', ')}`);
+  return PERFORMERS_2026;
+ }
+ return (route.edition?.sections || []).filter(section => section.type === 'speakers')
+  .flatMap(section => section.blocks.filter(block => block.kind === 'person').map(block => block.alt))
+  .filter(name => name && !/^(Imagen|Speaker de la edición)/.test(name));
 }
 const routes = [
  {url:'/', expression:'home()'},
  {url:'/quienes-somos/', expression:'about()'},
  {url:'/conferencia/', expression:'conference()'},
  {url:'/contacto/', expression:'contact()'},
+ {url:'/preguntas-frecuentes/', html:faqPage},
+ {url:'/prensa/', html:pressPage},
  {url:'/ediciones/', expression:'historyPage()', history:true},
  {url:'/ediciones/2026/', expression:'edition2026()', year:2026, edition:edition2026()},
  ...editions.map(e => ({url:`/ediciones/${e.year}/`, year:e.year, edition:e, history:true}))
@@ -94,14 +127,14 @@ function shareImage(cover) {
  return undefined;
 }
 const historyHtml = render('historyPage()');
-const escapeHtml = value => String(value).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function escapeHtml(value) { return String(value).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function pageForYear(year, edition) {
  const sections = [...historyHtml.matchAll(/<section class="history-edition"[\s\S]*?(?=<section class="history-edition"|<section class="history-next")/g)];
  const section = sections.find(m => m[0].includes(`id="history-${year}"`))?.[0];
  if (!section) throw Error('Missing historical edition ' + year);
  const first = historyHtml.slice(0, historyHtml.indexOf('<section class="history-edition"'));
  const last = historyHtml.slice(historyHtml.indexOf('<section class="history-next"'));
- return first.replace('<h1>Una historia de encuentros.</h1>', `<h1>Masters ${year}: ${escapeHtml(edition.title)}</h1>`) + section + last;
+ return first.replace('<h1>Una historia de encuentros.</h1>', `<h1>${escapeHtml(PAGE_COPY[`/ediciones/${year}/`]?.h1 || edition.title)}</h1>`) + section + last;
 }
 function transformHtml(html, route, prefix) {
  html = html.replace(/<a\b[^>]*aria-label="Edición (\d{4}):[^>]*>/g,
@@ -138,7 +171,7 @@ for (const route of routes) {
  const file = path.join(root, route.url.slice(1), 'index.html');
  const prefix = path.relative(path.dirname(file), root).split(path.sep).join('/') + '/';
  const rootPrefix = prefix === '/' ? './' : prefix;
- let main = route.expression ? render(route.expression) : pageForYear(route.year, route.edition);
+ let main = route.html ? route.html() : route.expression ? render(route.expression) : pageForYear(route.year, route.edition);
  const invitation = route.url === '/' ? renderEventInvitation() : '';
  if (invitation) {
   // La presentación de Masters sigue primero; el evento es el segundo bloque.
@@ -151,7 +184,7 @@ for (const route of routes) {
  }
  // Give the home H1 real text and hide its decorative logo, touching only the H1 itself.
  if (route.url === '/') main = mustReplace(main, /<h1 id="home-title">([\s\S]*?)<\/h1>/, (all, inner) =>
-  '<h1 id="home-title"><span class="sr-only">Masters Argentina · Conferencia de estudiantes argentinos de posgrado</span>' +
+  `<h1 id="home-title"><span class="sr-only">${escapeHtml(PAGE_COPY['/'].h1)}</span>` +
   mustReplace(inner, /(<img\b[^>]*?)alt="Masters Argentina"/, '$1alt="" aria-hidden="true"') + '</h1>');
  main = transformHtml(main, route, rootPrefix);
  let shell = source.replace(/<script\b[^>]*>[\s\S]*?<\/script>/g, '').replace(/<style\b[^>]*>[\s\S]*?<\/style>/g, '');
@@ -166,7 +199,7 @@ for (const route of routes) {
  // Current navigation state is present even with JavaScript disabled.
  const navPath = route.url.startsWith('/ediciones/') ? (route.year === 2026 ? '/ediciones/2026/' : '/ediciones/') : route.url;
  shell = shell.replace(/(<nav\b[^>]*id="main-nav"[^>]*>)([\s\S]*?)(<\/nav>)/, (all,start,content,end) => start + content.replace(/<a\b([^>]*?)href="([^"]+)"([^>]*)>/g,(m,a,href,b)=>href===rootPrefix+navPath.slice(1)?`<a${a}href="${href}"${b} aria-current="page">`:m).replace('class="editions-toggle"',`class="editions-toggle${route.url.startsWith('/ediciones/')?' is-current':''}"`) + end);
- const metadata = buildSeoHead({path:route.url, html:main, edition:route.edition, image:shareImage(route.edition?.cover)});
+ const metadata = buildSeoHead({path:route.url, html:main, edition:route.edition, image:shareImage(route.edition?.cover), performers:performersFor(route, main)});
  shell = mustReplace(shell, '</head>', metadata + `\n<link rel="stylesheet" href="${rootPrefix}assets/site.css">\n</head>`);
  if (route.url === '/') shell = shell.replace('</head>', `<link rel="stylesheet" href="${rootPrefix}assets/event-invitation.css">\n</head>`);
  if (invitation) shell = shell.replace('</body>', `<script src="${rootPrefix}assets/event-invitation.js" defer></script>\n</body>`);

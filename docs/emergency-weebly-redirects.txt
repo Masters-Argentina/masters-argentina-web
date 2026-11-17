@@ -6,6 +6,8 @@
 /quienes-somos/* https://old.mastersargentina.org/quienes-somos.html 302!
 /conferencia/* https://old.mastersargentina.org/ 302!
 /contacto/* https://old.mastersargentina.org/contacto.html 302!
+/preguntas-frecuentes/* https://old.mastersargentina.org/faqs.html 302!
+/prensa/* https://old.mastersargentina.org/prensa.html 302!
 /ediciones/2016/* https://old.mastersargentina.org/conferencia-2016.html 302!
 /ediciones/2017/* https://old.mastersargentina.org/conferencia-2017.html 302!
 /ediciones/2018/* https://old.mastersargentina.org/conferencia-2018.html 302!

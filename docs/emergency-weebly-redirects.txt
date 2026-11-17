@@ -1,3 +1,27 @@
 # Emergency fallback: replace the ROOT _redirects file with this content, commit, and push.
 # Requires the old Weebly site and Netlify HTTPS to be healthy. See domain-rollback.txt.
-/* https://old.mastersargentina.org/ 302!
+# All rules are temporary (302) and forced (!), so they win over the files Netlify still has.
+
+# New-site pages that have no same-named page on Weebly go to their original equivalents.
+/quienes-somos/* https://old.mastersargentina.org/quienes-somos.html 302!
+/conferencia/* https://old.mastersargentina.org/ 302!
+/contacto/* https://old.mastersargentina.org/contacto.html 302!
+/preguntas-frecuentes/* https://old.mastersargentina.org/faqs.html 302!
+/prensa/* https://old.mastersargentina.org/prensa.html 302!
+/ediciones/2016/* https://old.mastersargentina.org/conferencia-2016.html 302!
+/ediciones/2017/* https://old.mastersargentina.org/conferencia-2017.html 302!
+/ediciones/2018/* https://old.mastersargentina.org/conferencia-2018.html 302!
+/ediciones/2019/* https://old.mastersargentina.org/conferencia-2019.html 302!
+/ediciones/2020/* https://old.mastersargentina.org/master-argentina-conecta.html 302!
+/ediciones/2021/* https://old.mastersargentina.org/conferencia-2021.html 302!
+/ediciones/2022/* https://old.mastersargentina.org/conferencia-2022.html 302!
+/ediciones/2023/* https://old.mastersargentina.org/conferencia-2023.html 302!
+/ediciones/2024/* https://old.mastersargentina.org/conferencia-2024.html 302!
+/ediciones/2025/* https://old.mastersargentina.org/conferencia-2025.html 302!
+/ediciones/2026/* https://old.mastersargentina.org/ 302!
+/ediciones/* https://old.mastersargentina.org/conferencias-pasadas.html 302!
+/oldpage/* https://old.mastersargentina.org/:splat 302!
+
+# Everything else keeps its path, so old deep links, /uploads/*, /robots.txt and
+# /sitemap.xml reach the matching Weebly file instead of the archive homepage.
+/* https://old.mastersargentina.org/:splat 302!

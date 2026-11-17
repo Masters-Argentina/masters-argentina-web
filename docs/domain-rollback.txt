@@ -12,10 +12,10 @@ Weebly site ID: 135309264663681958
 Netlify project: keen-faun-89f080
 
 QUICKEST RETURN TO THE OLD WEBSITE (after Netlify HTTPS is working)
-1. Replace the repository's _redirects file with the single rule in docs/emergency-weebly-redirects.txt.
+1. Replace the repository's _redirects file with the rules in docs/emergency-weebly-redirects.txt.
 2. Commit and push to main; wait for Netlify to show Published.
-3. Test the main domain in a private browser window. Every URL will temporarily send visitors to the old Weebly homepage. Its own navigation, historical pages, and newsletter remain on Weebly.
-4. To undo this emergency mode, restore _redirects from the migration commit 124ae1c and redeploy.
+3. Test the main domain in a private browser window. Every URL temporarily sends visitors to the same path on the old Weebly site; new-site pages (/quienes-somos/, /ediciones/2024/ and so on) go to their original Weebly equivalents. /robots.txt and /sitemap.xml are served by Weebly too. Its own navigation, historical pages, and newsletter remain on Weebly.
+4. To undo this emergency mode, revert the emergency commit (git revert <emergency commit>) and redeploy. Do not restore an older _redirects by commit ID: that would drop any redirect changes made since.
 This keeps the main domain on Netlify and therefore avoids another DNS wait. It does not repair a missing Netlify TLS certificate or a Netlify service outage.
 
 FULL RETURN TO WEEBLY HOSTING

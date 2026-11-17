@@ -1,15 +1,6 @@
-# Keep source files and the internal working document out of search results.
-/source/*
-  X-Robots-Tag: noindex
-/scripts/*
-  X-Robots-Tag: noindex
-/docs/*
-  X-Robots-Tag: noindex
+# Source, scripts, docs and data files are not deployed (only dist/ is published).
+# Keep the internal working document out of search results.
 /informe
   X-Robots-Tag: noindex
 /informe.html
-  X-Robots-Tag: noindex
-/README.md
-  X-Robots-Tag: noindex
-/cloudinary-images.json
   X-Robots-Tag: noindex

@@ -1,4 +1,5 @@
 # Generate crawlable static pages from the shared source template.
+# Only dist/ is deployed: the build copies the public files into it (PUBLIC_FILES in scripts/build.mjs).
 [build]
-  publish = "."
+  publish = "dist"
   command = "node scripts/build.mjs"

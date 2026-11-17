@@ -12,9 +12,9 @@ Netlify deploys `main` from `Masters-Argentina/masters-argentina-web` automatica
 2. Edit titles, descriptions and structured-data rules in `scripts/seo.mjs`. Its `SITE_ORIGIN` is the production origin for canonical URLs, social metadata and the sitemap.
 3. Run `node scripts/build.mjs` using Node.js 22 or newer. The build uses only Node's standard library and needs no package installation.
 4. Review and commit both source changes and regenerated files. Push or merge into `main`.
-5. Netlify runs the build and publishes the repository root. Follow progress in the [deploy dashboard](https://app.netlify.com/projects/keen-faun-89f080/deploys).
+5. Netlify runs the build and publishes only `dist/`, which the build fills with the public files listed in `PUBLIC_FILES` in `scripts/build.mjs`. Source, scripts, docs and data files are not deployed; add a new public root file to that list on purpose. Follow progress in the [deploy dashboard](https://app.netlify.com/projects/keen-faun-89f080/deploys).
 
-Generated files should not be edited directly: root `index.html`, section/year `index.html` pages, `assets/site.css`, `assets/site-runtime.js`, `sitemap.xml`, and `robots.txt`. The existing GitHub Pages branch-root deployment serves the committed generated pages too; their canonicals point to Netlify.
+Generated files should not be edited directly: root `index.html`, section/year `index.html` pages, `assets/site.css`, `assets/site-runtime.js`, `sitemap.xml`, `robots.txt`, and `dist/` (not committed). The existing GitHub Pages branch-root deployment serves the committed generated pages too; their canonicals point to Netlify.
 
 ## URLs
 
@@ -43,17 +43,19 @@ Visit `http://127.0.0.1:8000/`. Nested pages also work when the whole site is se
 
 `cloudinary-images.json` records the delivery URL mapping; the source template contains the runtime-source equivalent as `CLOUDINARY_IMAGES`. When replacing an image, upload the new image, update both mappings, and update its dimensions in `scripts/image-dimensions.json` if necessary. Rebuild afterward. Use a new asset/version URL for a replacement so it is immediately distinguishable from cached images. Raster delivery uses automatic format/quality; SVGs and the favicon retain their original formats. Do not upload the historical library without a new request.
 
+Social previews (`og:image`) are always JPEG. Cloudinary images are requested as 1200px JPEG automatically. A local edition cover needs a pre-converted copy in `assets/og/<same name>.jpg`; without one the build warns and uses the default image. On macOS: `sips -s format jpeg -s formatOptions 82 -Z 1200 assets/history/NAME.webp --out assets/og/NAME.jpg`.
+
 ## Technical SEO
 
 Each of the 16 public pages has a title, description, canonical URL, Open Graph and Twitter metadata. Organization JSON-LD is shared; FAQ markup matches the visible answered questions on Contact. Historical Event markup is emitted only when exact dates and venue information exist. Planned 2027 dates and incomplete 2020/2021 event information are not promoted to complete Event markup.
 
 The home heading includes accessible brand text while preserving the logo appearance. Images have explicit dimensions where known, deferred loading where appropriate, and separate delivery URLs. Shared styling and behavior are cacheable files rather than duplicated template/data scripts.
 
-`_headers` prevents indexing of source, scripts, documentation and the internal working document. `_redirects` contains only compatibility aliases for this recovered site. See [SEO rollout notes](docs/seo-rollout.md) for the remaining domain and editorial decisions.
+Netlify does not deploy source, scripts or documentation (see `PUBLIC_FILES`); `_headers` keeps the internal working document out of search results. `_redirects` sends legacy Weebly URLs to their new pages (301) or to the archive host (302, so they stay easy to change). See [SEO rollout notes](docs/seo-rollout.md) for the remaining domain and editorial decisions.
 
 ## Validation
 
-Run `node --test scripts/seo.test.mjs` after metadata changes. For the full generated-page audit, install the optional local checker dependency with `python3 -m pip install beautifulsoup4`, then run `python3 scripts/verify-site.py --site .`. Repeat with `--base-path /masters-argentina-web/` to check subdirectory links. The checker can accept `--baseline` and `--baseline-rendered` when comparing an earlier release. These checks are for local development; Netlify needs no Python dependencies.
+Run `node --test scripts/*.test.mjs` after metadata or routing changes (SEO metadata, legacy hash routes and link rewriting). For the full generated-page audit, install the optional local checker dependency with `python3 -m pip install beautifulsoup4`, then run `python3 scripts/verify-site.py --site .`. Repeat with `--base-path /masters-argentina-web/` to check subdirectory links. The checker can accept `--baseline` and `--baseline-rendered` when comparing an earlier release. These checks are for local development; Netlify needs no Python dependencies.
 
 ## Origin and scope
 

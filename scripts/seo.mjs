@@ -6,6 +6,8 @@ export const SITE_ORIGIN = 'https://mastersargentina.org';
 export const DEFAULT_IMAGE = 'https://res.cloudinary.com/lzfq7irq/image/upload/c_limit,w_1200/q_auto/f_jpg/v1794327840/masters-argentina/conference-2026/2026-galeria-comunidad-ccb6cb7edd7c.jpg';
 const LOGO = 'https://res.cloudinary.com/lzfq7irq/image/upload/v1794327860/masters-argentina/branding-and-general/masters-logo-hq-d9c0fc269d8f.png';
 const SITE_NAME = 'Masters Argentina';
+/** Countries of the cities that have hosted an in-person edition. Unknown cities get no country. */
+const CITY_COUNTRY = {'Nueva York':'US', 'Boston':'US', 'Chicago':'US', 'Washington DC':'US', 'Miami':'US'};
 const PAGE_COPY = {
   '/': {
     title: 'Masters Argentina · Conferencia de estudiantes argentinos de posgrado',
@@ -85,15 +87,34 @@ export function editionDates(edition) {
   return {startDate:iso(start), endDate:iso(end)};
 }
 
+/** Social crawlers do not always negotiate formats and some reject WebP or very
+ * large PNGs, so every Cloudinary share is forced to a 1200px-wide JPEG. */
 function sharingImage(image, origin) {
   if (!image) return DEFAULT_IMAGE;
   const url = new URL(image, `${origin}/`);
   if (url.protocol !== 'https:') return DEFAULT_IMAGE;
-  // Social crawlers do not always negotiate formats; use a fixed JPEG for Cloudinary shares.
-  if (url.hostname === 'res.cloudinary.com' && /\/f_auto\//.test(url.pathname)) {
-    url.pathname = url.pathname.replace('/f_auto/', '/f_jpg/').replace(/\.(webp|png|avif)$/i, '.jpg');
+  if (url.hostname === 'res.cloudinary.com') {
+    url.pathname = url.pathname.split('/').map(segment => segment.split(',').map(param =>
+      param === 'f_auto' ? 'f_jpg' : /^w_\d+$/.test(param) ? 'w_1200' : param).join(',')).join('/')
+      .replace(/\.(webp|png|avif)$/i, '.jpg');
   }
   return url.href;
+}
+
+const MAX_TITLE_LENGTH = 65;
+const isVirtual = city => /virtual/i.test(String(city));
+
+/** Brand and year always lead (search results cut the end). The place is added only
+ * when the whole title still fits a search-result line; the description always names it. */
+function editionCopy(year, edition) {
+  const title = String(edition.title).replace(/\.$/, '');
+  const place = isVirtual(edition.city) ? '(virtual)' : `en ${edition.city}`;
+  const withPlace = `Masters Argentina ${year} ${place} · ${title}`;
+  const where = isVirtual(edition.city) ? 'en formato virtual' : `en ${edition.city}`;
+  return {
+    title: withPlace.length <= MAX_TITLE_LENGTH ? withPlace : `Masters Argentina ${year} · ${title}`,
+    description: `Conferencia Masters Argentina ${year} ${where}: ${title}. Conocé los speakers, los encuentros y los materiales de esta edición.`
+  };
 }
 
 export function pageMetadata({path, edition, image, origin = SITE_ORIGIN}) {
@@ -103,10 +124,7 @@ export function pageMetadata({path, edition, image, origin = SITE_ORIGIN}) {
   if (/^\/ediciones\/\d{4}\/$/.test(normalized) && edition) {
     const year = normalized.split('/')[2];
     if (String(edition.year) !== year) throw new Error('Edition metadata does not match page path.');
-    copy = {
-      title: `Masters Argentina ${year} en ${edition.city} · ${edition.title}`,
-      description: `Conferencia Masters Argentina ${year} en ${edition.city}: ${edition.title}. Conocé los speakers, los encuentros y los materiales de esta edición.`
-    };
+    copy = editionCopy(year, edition);
   }
   if (!copy) throw new Error(`Missing metadata for ${normalized}`);
   return {...copy, canonical:canonicalUrl(normalized, base), image:sharingImage(image,base), path:normalized, origin:base};
@@ -130,9 +148,11 @@ export function structuredData({path, html = '', edition, image, origin = SITE_O
   // 2020 has cancelled-conference/webinar material and 2021 lacks exact dates.
   // 2027 remains deliberately excluded until the confirmed event has full dates and a venue.
   if (/^\/ediciones\/\d{4}\/$/.test(metadata.path) && dates && edition?.venue && edition?.city && ![2020,2021,2027].includes(Number(edition.year))) {
-    const places = String(edition.venue).split(' · ').map(name => ({'@type':'Place', name, address:{'@type':'PostalAddress',addressLocality:edition.city,addressCountry:'US'}}));
+    const country = CITY_COUNTRY[edition.city];
+    const address = {'@type':'PostalAddress', addressLocality:edition.city, ...(country ? {addressCountry:country} : {})};
+    const places = String(edition.venue).split(' · ').map(name => ({'@type':'Place', name, address}));
     graph.push({
-      '@type':'Event', '@id':`${metadata.canonical}#event`, name:`Masters Argentina ${edition.year}: ${edition.title}`,
+      '@type':'Event', '@id':`${metadata.canonical}#event`, name:`Masters Argentina ${edition.year} · ${String(edition.title).replace(/\.$/, '')}`,
       description:edition.summary || metadata.description, url:metadata.canonical, ...dates,
       location:places.length === 1 ? places[0] : places, image:[metadata.image], organizer:{'@id':organizationId},
       eventAttendanceMode:'https://schema.org/OfflineEventAttendanceMode'

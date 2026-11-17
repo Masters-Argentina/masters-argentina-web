@@ -66,3 +66,30 @@ test('sitemap has only deduplicated real canonical URLs, and robots exposes it',
   for (const path of ['#contacto','//elsewhere.com','/contacto/#x','/../secret','https://example.com/']) assert.throws(()=>normalizePath(path));
   assert.throws(()=>buildSitemap(['/'],'https://example.com/prefix/'));
 });
+
+test('edition titles never read "en Virtual" and drop the place before the brand when long', () => {
+  const virtual = pageMetadata({path:'/ediciones/2021/', edition:{...edition, year:2021, city:'Virtual', title:'Argentina resiliente'}});
+  assert.equal(virtual.title, 'Masters Argentina 2021 (virtual) · Argentina resiliente');
+  assert.doesNotMatch(virtual.title + virtual.description, /en (Virtual|Encuentros virtuales)/);
+  assert.match(virtual.description, /en formato virtual/);
+  const long = pageMetadata({path:'/ediciones/2022/', edition:{...edition, year:2022, city:'Chicago', title:'Conversaciones improbables para una Argentina posible'}});
+  assert.equal(long.title, 'Masters Argentina 2022 · Conversaciones improbables para una Argentina posible');
+  assert.match(long.description, /en Chicago/);
+  const short = pageMetadata({path:'/ediciones/2017/', edition:{...edition, year:2017, city:'Boston', title:'Construyendo Argentina'}});
+  assert.equal(short.title, 'Masters Argentina 2017 en Boston · Construyendo Argentina');
+});
+
+test('social images are JPEG: Cloudinary f_auto and wide transforms become a 1200px JPEG', () => {
+  const image = 'https://res.cloudinary.com/demo/image/upload/c_limit,w_1600/q_auto,f_auto/v1/folder/photo.png';
+  const meta = pageMetadata({path:'/ediciones/2025/', edition, image});
+  assert.equal(meta.image, 'https://res.cloudinary.com/demo/image/upload/c_limit,w_1200/q_auto,f_jpg/v1/folder/photo.jpg');
+  assert.equal(pageMetadata({path:'/ediciones/2025/', edition, image:'assets/og/cover.jpg'}).image, `${SITE_ORIGIN}/assets/og/cover.jpg`);
+});
+
+test('Event addresses only carry a country for known host cities', () => {
+  const known = structuredData({path:'/ediciones/2025/', edition})['@graph'].find(x=>x['@type']==='Event');
+  assert.equal(known.location[0].address.addressCountry, 'US');
+  const unknown = structuredData({path:'/ediciones/2025/', edition:{...edition, city:'Madrid'}})['@graph'].find(x=>x['@type']==='Event');
+  assert.equal(unknown.location[0].address.addressCountry, undefined);
+  assert.equal(unknown.location[0].address.addressLocality, 'Madrid');
+});
